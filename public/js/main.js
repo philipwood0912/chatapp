@@ -9,15 +9,13 @@ import ChatMessage from "./modules/chatMessage.js";
     
     function setUserId({sID, message}) {
         vm.socketID = sID;
-        //console.log(sID);
     }
     
     function runDisconnectMessage(packet) {
-        //console.log(packet);
-        // subtract one from connections when a user leaves
+        // set vue connections
         vm.connections = packet.connection;
         var userindx;
-        // loop throught multi array to match disconnecting ids
+        // loop through array to match disconnecting ids
         // and remove user who disconnected
         for(var i=0; i<vm.currentUsers.length;i++){
             if(packet.id === vm.currentUsers[i].id){
@@ -32,6 +30,7 @@ import ChatMessage from "./modules/chatMessage.js";
         //console.log(msg);
         // set audio file on msg function
         let audio = new Audio('../audio/ping.wav');
+        audio.volume = 0.3;
         vm.messages.push(msg);
         // if message id and vue socketID do not match play audio file
         // so sound is only played when you receive a message
@@ -43,7 +42,7 @@ import ChatMessage from "./modules/chatMessage.js";
     // function to set nickname for chat
     function setNickName(packet) {
         console.log(packet);
-        //push id / name / auth value to an array to be parsed over
+        //set current users in vue
         vm.currentUsers = packet.currentusers;
         // run auth check to make sure right user is authenticated
         vm.authenticated = vm.authCheck(vm.socketID, vm.currentUsers);
@@ -70,9 +69,10 @@ import ChatMessage from "./modules/chatMessage.js";
     
                 socket.emit('chat_message', {
                     content: this.message,
+                    //match ids for current users name
                     name: this.nameCheck(this.socketID, this.currentUsers)
                 })
-                
+                //this.scrollToBottom();
                 this.message = "";
             },
             //set name function
@@ -105,7 +105,15 @@ import ChatMessage from "./modules/chatMessage.js";
                         return arr[i].auth;
                     }
                 }
+            },
+            scrollToBottom(){
+                var container = this.$el.querySelector(".messages");
+                container.scrollTop = container.scrollHeight
+                //debugger;
             }
+        },
+        updated: function() {
+            this.$nextTick(() => this.scrollToBottom());
         },
         //conponents for chatapp
         components: {
