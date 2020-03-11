@@ -1,1 +1,10 @@
-@import 'modules/_home';
+@import 'modules/_room';
+@import 'modules/_header';
+@import 'modules/_name';
+@import 'modules/_chat';
+body {
+    height: 85vh;
+}
+main {
+    height: 100%;
+}

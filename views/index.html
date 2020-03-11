@@ -3,17 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/logo.ico">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
     <link rel="stylesheet" href="css/main.css">
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
-    <title>Document</title>
+    <title>Chat App</title>
 </head>
 <body>
+    <header>
+        <img src="images/app-logo.svg" alt="logo">
+        <h1>Philip's Chat App</h1>
+    </header>
     <main id="app">
         <div v-if="!authenticated">
             <newname></newname>
         </div>
         <div v-else></div>
         <div v-if="authenticated">
+            <div>
+                <h2 id="usersCon">Users Connected: {{connections}}</h2>
+                <ul></ul>
+            </div>
+            <div class="messages">
+                <ul id="messages" v-for="message in messages">
+                    <newmessage :msg="message"></newmessage>
+                </ul>
+		    </div>
             <newroom></newroom>
         </div>
         <div v-else></div>

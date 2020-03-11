@@ -1,0 +1,26 @@
+.new-message { 
+    span { font-size: 1rem; display: block; margin-bottom: 2px; }
+
+    width: 45%;
+    padding: 8px 12px;
+    background-color: #ccc; 
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    float:left;
+    clear: both;
+}
+
+.my-message {
+    float: right !important;
+    background-color: #007cff;
+    color: white;
+}
+.messages{
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow-y: auto;
+    width: 400px;
+    height: 65vh;
+}

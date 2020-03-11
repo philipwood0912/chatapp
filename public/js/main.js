@@ -1,32 +1,55 @@
 // imports always go first - if we're importing anything
 import nameComponent from "./modules/nameComponent.js";
 import roomComponent from "./modules/roomComponent.js";
+import ChatMessage from "./modules/chatMessage.js";
 
 (() => {
     
     const socket = io();
     
     function setUserId({sID, message}) {
-        //debugger;
         vm.socketID = sID;
+        //console.log(sID);
     }
     
     function runDisconnectMessage(packet) {
-        debugger;
-        console.log(packet);
+        //console.log(packet);
+        // subtract one from connections when a user leaves
+        vm.connections = packet.connection;
+        var userindx;
+        // loop throught multi array to match disconnecting ids
+        // and remove user who disconnected
+        for(var i=0; i<vm.nickName.length;i++){
+            if(packet.id === vm.nickName[i][0]){
+                userindx = vm.nickName.indexOf(vm.nickName[i]);
+                vm.nickName.splice(userindx, 1);
+            }
+        }
+        console.log(vm.nickName);
     }
     
     function appendNewMessage(msg) {
+        //console.log(msg);
+        // set audio file on msg function
+        let audio = new Audio('../audio/ping.wav');
         vm.messages.push(msg);
+        // if message id and vue socketID do not match play audio file
+        // so sound is only played when you receive a message
+        if(msg.id != vm.socketID){
+            audio.play();
+        }
+
     }
-    
+    // function to set nickname for chat
     function setNickName(packet) {
-        console.log(packet);
-        //vm.nickName.push([packet.id, packet.nickName.name]);
-        vm.nickName['name'] = packet.nickName.name;
-        vm.authenticated = packet.nickName.authenticated;
-        console.log(vm.nickName);
-        console.log(vm.authenticated);
+        //console.log(packet);
+        //push id / name / auth value to an array to be parsed over
+        vm.nickName.push([packet.id, packet.newname, packet.auth]);
+        // run auth check to make sure right user is authenticated
+        vm.authenticated = vm.authCheck(vm.socketID, vm.nickName);
+        // set connections when user picks a name and is sent into chat
+        vm.connections = packet.connection;
+        //console.log(vm.nickName);
     }
     
     // this is our main Vue instance
@@ -35,8 +58,9 @@ import roomComponent from "./modules/roomComponent.js";
             socketID: "",
             messages: [],
             message: "",
-            nickName: {},
-            authenticated: false
+            nickName: [],
+            authenticated: false,
+            connections: ""
         },
     
         methods: {
@@ -46,28 +70,50 @@ import roomComponent from "./modules/roomComponent.js";
     
                 socket.emit('chat_message', {
                     content: this.message,
-                    name: this.nickName['name']
+                    name: this.nameCheck(this.socketID, this.nickName)
                 })
-    
+                
                 this.message = "";
             },
+            //set name function
             nameSetFunct(nameSet) {
                 console.log('set nickname');
-    
+                // if nameset is not an empty string
                 if(nameSet != ""){
                     socket.emit('name_set', {
                         name: nameSet,
+                        //authenticate the user
                         authenticated: true
                     })
                 }
+            },
+            //name check function
+            // loops over an array containing username and socketids
+            // if ids match return the username for use in the chat
+            nameCheck(id, arr){
+                for(let i=0;i<arr.length;i++){
+                    if(id === arr[i][0]){
+                        return arr[i][1];
+                    }
+                }
+            },
+            //authenticated check
+            //same as name check function but return authentication if ids match
+            authCheck(id, arr){
+                for(let i=0;i<arr.length;i++){
+                    if(id === arr[i][0]){
+                        return arr[i][2];
+                    }
+                }
             }
         },
-    
+        //conponents for chatapp
         components: {
             newname: nameComponent,
-            newroom: roomComponent
+            newroom: roomComponent,
+            newmessage: ChatMessage
+
         },
-    
         mounted: function() {
             console.log('mounted');
         }
