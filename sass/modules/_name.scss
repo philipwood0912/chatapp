@@ -1,0 +1,33 @@
+#name {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    form {
+        margin-top: 25vh;
+        text-align: center;
+        h2 {
+            font-size: 35px;
+            margin-top: 20px;
+        }
+        input {
+            width: 100%;
+            height: 35px;
+            text-align: center;
+            font-size: 23px;
+            border: solid 2px #007cff;
+            -webkit-box-shadow:0 0 5px #007cff inset;
+            -moz-box-shadow:0 0 5px #007cff inset;
+            box-shadow:0 0 5px #007cff inset;
+            margin-top: 20px;
+        }
+        button {
+            width: 100px;
+            height: 40px;
+            font-size: 25px;
+            border: solid 2px #007cff;
+            margin-top: 20px;
+        }
+        input:focus, button:focus {outline:none}
+    }
+}
