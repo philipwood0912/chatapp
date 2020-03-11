@@ -40,13 +40,11 @@ io.on('connection', function(socket) {
         console.log(name);
         // add username to socket
         socket.username = name.name;
+        // push content to server side array on name set
         userArr.push({id:socket.id, name:socket.username, auth:name.authenticated});
         console.log(userArr);
         // emit nickname including id and socket username
         io.emit('nickname', { 
-            id: socket.id,
-            newname: socket.username,
-            auth: name.authenticated,
             connection: userArr.length,
             currentusers: userArr
         });
@@ -55,17 +53,13 @@ io.on('connection', function(socket) {
     // listen for a disconnect event
     socket.on('disconnect', function() {
         var userindx;
+        //loop through array on server side and remove users when they disconnect
         for(var i=0;i<userArr.length;i++){
             if(socket.id === userArr[i].id){
                 userindx = userArr.indexOf(userArr[i]);
                 userArr.splice(userindx, 1);
             }
         }
-        // var userindx = userArr.indexOf(`${socket.username}`);
-        // if (userindx > -1) {
-        //     userArr.splice(userindx, 1);
-        // }
-        console.log(userArr);
         console.log('a user disconnected');
         message = `${socket.id} has left the chat!`;
         io.emit('user_disconnect', {message, id: socket.id, name: socket.username, connection: userArr.length});

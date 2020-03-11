@@ -21,17 +21,20 @@
         </div>
         <div v-else></div>
         <div v-if="authenticated">
-            <div id="userArea">
-                <h2 id="usersCon">Users Connected: {{connections}}</h2>
-                <ul v-for="(user, index) in currentUsers" :key="index">
-                    <li>{{user.name}}</li>
-                </ul>
+            <div id="messageflex">
+                <div id="userArea">
+                    <h2 id="usersCon">Users Connected: {{connections}}</h2>
+                    <ul v-for="(user, index) in currentUsers" :key="index">
+                        <li>- {{user.name}}</li>
+                    </ul>
+                </div>
+                <div class="messages">
+                    <div class="message" v-for="message in messages">
+                        <newmessage :msg="message"></newmessage>
+                    </div>
+                    <!-- <newmessage v-for="(message, index) in messages" :msg="message" :key="index"></newmessage> -->
+                </div>
             </div>
-            <div class="messages">
-                <ul id="messages" v-for="message in messages">
-                    <newmessage :msg="message"></newmessage>
-                </ul>
-		    </div>
             <newroom></newroom>
         </div>
         <div v-else></div>
