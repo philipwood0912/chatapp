@@ -20,10 +20,13 @@ const server = app.listen(port, () => {
 // this is all of our socket.io messaging functionality
 
 // attach socket.io
-io.attach(server);
+io.attach(server, {
+    pingTimeout: 60000,
+});
 
 io.on('connection', function(socket) {
     console.log('user connected');
+    console.log(`${socket.id}`);
     socket.emit('connected', { sID: `${socket.id}`, message: 'new connection'});
 
     // listen for an incoming message from a user (socket refers to an idividual user)
@@ -33,10 +36,14 @@ io.on('connection', function(socket) {
         io.emit('new_message', { id: socket.id, message: msg });
     })
 
+    socket.on('name_set', function(name) {
+        console.log(name);
+        io.emit('nickname', { id: socket.id, nickName: name});
+    })
+
     // listen for a disconnect event
     socket.on('disconnect', function() {
         console.log('a user disconnected');
-
         message = `${socket.id} has left the chat!`;
         io.emit('user_disconnect', message);
     })
