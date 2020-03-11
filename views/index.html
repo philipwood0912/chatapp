@@ -21,9 +21,11 @@
         </div>
         <div v-else></div>
         <div v-if="authenticated">
-            <div>
+            <div id="userArea">
                 <h2 id="usersCon">Users Connected: {{connections}}</h2>
-                <ul></ul>
+                <ul v-for="(name, index) in nickName" :key="index">
+                    <li>{{name.name}}</li>
+                </ul>
             </div>
             <div class="messages">
                 <ul id="messages" v-for="message in messages">

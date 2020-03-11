@@ -20,7 +20,7 @@ import ChatMessage from "./modules/chatMessage.js";
         // loop throught multi array to match disconnecting ids
         // and remove user who disconnected
         for(var i=0; i<vm.nickName.length;i++){
-            if(packet.id === vm.nickName[i][0]){
+            if(packet.id === vm.nickName[i].id){
                 userindx = vm.nickName.indexOf(vm.nickName[i]);
                 vm.nickName.splice(userindx, 1);
             }
@@ -44,12 +44,12 @@ import ChatMessage from "./modules/chatMessage.js";
     function setNickName(packet) {
         //console.log(packet);
         //push id / name / auth value to an array to be parsed over
-        vm.nickName.push([packet.id, packet.newname, packet.auth]);
+        vm.nickName.push({id:packet.id, name:packet.newname, auth:packet.auth});
         // run auth check to make sure right user is authenticated
         vm.authenticated = vm.authCheck(vm.socketID, vm.nickName);
         // set connections when user picks a name and is sent into chat
         vm.connections = packet.connection;
-        //console.log(vm.nickName);
+        console.log(vm.nickName);
     }
     
     // this is our main Vue instance
@@ -92,8 +92,8 @@ import ChatMessage from "./modules/chatMessage.js";
             // if ids match return the username for use in the chat
             nameCheck(id, arr){
                 for(let i=0;i<arr.length;i++){
-                    if(id === arr[i][0]){
-                        return arr[i][1];
+                    if(id === arr[i].id){
+                        return arr[i].name;
                     }
                 }
             },
@@ -101,8 +101,8 @@ import ChatMessage from "./modules/chatMessage.js";
             //same as name check function but return authentication if ids match
             authCheck(id, arr){
                 for(let i=0;i<arr.length;i++){
-                    if(id === arr[i][0]){
-                        return arr[i][2];
+                    if(id === arr[i].id){
+                        return arr[i].auth;
                     }
                 }
             }
