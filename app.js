@@ -34,26 +34,37 @@ io.on('connection', function(socket) {
         console.log(msg);
         //io is the switchborard operator
         io.emit('new_message', { id: socket.id, message: msg });
-        // emit connected users on server sit
-        //io.emit('connected_users', { connections: Object.keys(io.of('/').connected).length});
     })
 
     socket.on('name_set', function(name) {
         console.log(name);
         // add username to socket
         socket.username = name.name;
-        userArr.push(socket.username);
+        userArr.push({id:socket.id, name:socket.username, auth:name.authenticated});
         console.log(userArr);
         // emit nickname including id and socket username
-        io.emit('nickname', { id: socket.id, newname: socket.username, auth: name.authenticated, connection: userArr.length });
+        io.emit('nickname', { 
+            id: socket.id,
+            newname: socket.username,
+            auth: name.authenticated,
+            connection: userArr.length,
+            currentusers: userArr
+        });
     })
 
     // listen for a disconnect event
     socket.on('disconnect', function() {
-        var userindx = userArr.indexOf(`${socket.username}`);
-        if (userindx > -1) {
-            userArr.splice(userindx, 1);
+        var userindx;
+        for(var i=0;i<userArr.length;i++){
+            if(socket.id === userArr[i].id){
+                userindx = userArr.indexOf(userArr[i]);
+                userArr.splice(userindx, 1);
+            }
         }
+        // var userindx = userArr.indexOf(`${socket.username}`);
+        // if (userindx > -1) {
+        //     userArr.splice(userindx, 1);
+        // }
         console.log(userArr);
         console.log('a user disconnected');
         message = `${socket.id} has left the chat!`;

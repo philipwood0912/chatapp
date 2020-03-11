@@ -19,13 +19,13 @@ import ChatMessage from "./modules/chatMessage.js";
         var userindx;
         // loop throught multi array to match disconnecting ids
         // and remove user who disconnected
-        for(var i=0; i<vm.nickName.length;i++){
-            if(packet.id === vm.nickName[i].id){
-                userindx = vm.nickName.indexOf(vm.nickName[i]);
-                vm.nickName.splice(userindx, 1);
+        for(var i=0; i<vm.currentUsers.length;i++){
+            if(packet.id === vm.currentUsers[i].id){
+                userindx = vm.currentUsers.indexOf(vm.currentUsers[i]);
+                vm.currentUsers.splice(userindx, 1);
             }
         }
-        console.log(vm.nickName);
+        console.log(vm.currentUsers);
     }
     
     function appendNewMessage(msg) {
@@ -42,14 +42,14 @@ import ChatMessage from "./modules/chatMessage.js";
     }
     // function to set nickname for chat
     function setNickName(packet) {
-        //console.log(packet);
+        console.log(packet);
         //push id / name / auth value to an array to be parsed over
-        vm.nickName.push({id:packet.id, name:packet.newname, auth:packet.auth});
+        vm.currentUsers = packet.currentusers;
         // run auth check to make sure right user is authenticated
-        vm.authenticated = vm.authCheck(vm.socketID, vm.nickName);
+        vm.authenticated = vm.authCheck(vm.socketID, vm.currentUsers);
         // set connections when user picks a name and is sent into chat
         vm.connections = packet.connection;
-        console.log(vm.nickName);
+        console.log(vm.currentUsers);
     }
     
     // this is our main Vue instance
@@ -58,9 +58,9 @@ import ChatMessage from "./modules/chatMessage.js";
             socketID: "",
             messages: [],
             message: "",
-            nickName: [],
             authenticated: false,
-            connections: ""
+            connections: "",
+            currentUsers: ""
         },
     
         methods: {
@@ -70,7 +70,7 @@ import ChatMessage from "./modules/chatMessage.js";
     
                 socket.emit('chat_message', {
                     content: this.message,
-                    name: this.nameCheck(this.socketID, this.nickName)
+                    name: this.nameCheck(this.socketID, this.currentUsers)
                 })
                 
                 this.message = "";

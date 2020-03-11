@@ -23,8 +23,8 @@
         <div v-if="authenticated">
             <div id="userArea">
                 <h2 id="usersCon">Users Connected: {{connections}}</h2>
-                <ul v-for="(name, index) in nickName" :key="index">
-                    <li>{{name.name}}</li>
+                <ul v-for="(user, index) in currentUsers" :key="index">
+                    <li>{{user.name}}</li>
                 </ul>
             </div>
             <div class="messages">
